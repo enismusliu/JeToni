@@ -1,57 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { getPost } from "../api/queries";
+import { addPost } from "../api/mutation";
 
 function EditPost() {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
+
   const { postId } = useParams();
-  async function addPost(e) {
+
+  const addNewPost = async (e) => {
     e.preventDefault();
-    try {
-      const response = await fetch(
-        `https://jsonplaceholder.typicode.com/posts/${postId}`,
-        {
-          method: "PUT",
-          body: JSON.stringify({
-            title: title,
-            body: body,
-            userId: 1,
-          }),
-          headers: {
-            "Content-type": "application/json; charset=UTF-8",
-          },
-        }
-      );
-      const result = await response.json();
-      console.log(result);
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  }
-  async function getPost() {
-    try {
-      const response = await fetch(
-        `https://jsonplaceholder.typicode.com/posts/${postId}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      const result = await response.json();
-      setTitle(result.title);
-      setBody(result.body);
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  }
+    await addPost(postId, { title: title, body: body });
+  };
+  const getSpecificPost = async () => {
+    const specificPost = await getPost(postId);
+    setBody(specificPost.body);
+    setTitle(specificPost.title);
+  };
 
   useEffect(() => {
-    getPost();
+    getSpecificPost();
   }, []);
   return (
-    <form onSubmit={(e) => addPost(e)}>
+    <form onSubmit={(e) => addNewPost(e)}>
       <input
         type="text"
         placeholder="Title"

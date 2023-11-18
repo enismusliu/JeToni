@@ -1,33 +1,19 @@
 import React, { useState } from "react";
+import { createPost } from "../api/mutation";
 
 function CreatePost() {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
-  async function addPost(e) {
+  const createNewPost = async (e) => {
     e.preventDefault();
-    try {
-      const response = await fetch(
-        `https://jsonplaceholder.typicode.com/posts`,
-        {
-          method: "POST",
-          body: JSON.stringify({
-            title: title,
-            body: body,
-            userId: 1,
-          }),
-          headers: {
-            "Content-type": "application/json; charset=UTF-8",
-          },
-        }
-      );
-      const result = await response.json();
-      console.log(result);
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  }
+    await createPost({
+      title: title,
+      body: body,
+      userId: 1,
+    });
+  };
   return (
-    <form onSubmit={(e) => addPost(e)}>
+    <form onSubmit={(e) => createNewPost(e)}>
       <input
         type="text"
         placeholder="Title"
